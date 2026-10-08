@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AVANIQ Splash</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #f2f9e9;
+}
+
+.splash-screen {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+
+  /* EXACT ORIGINAL AVANIQ SPLASH BG */
+  background:
+    radial-gradient(
+      circle at 20% 20%,
+      rgba(255,255,255,.85),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 85% 80%,
+      rgba(83,157,93,.35),
+      transparent 40%
+    ),
+    linear-gradient(
+      145deg,
+      #f2f9e9 0%,
+      #c7e7b7 48%,
+      #87c78c 100%
+    );
+}
+
+/* ORIGINAL SPLASH GLOW */
+
+.splash-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 330px;
+  height: 330px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.38);
+  filter: blur(45px);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  animation: glowMove 4s ease-in-out infinite alternate;
+}
+
+@keyframes glowMove {
+  from {
+    transform: translate(-50%, -50%) translateY(15px);
+  }
+  to {
+    transform: translate(-50%, -50%) translateY(-15px);
+  }
+}
+
+/* PRODUCT IMAGES */
+
+.splash-image {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  width: min(75vw, 200px);
+  height: min(55dvh, 350px);
+  object-fit: contain;
+
+  opacity: 0;
+  z-index: 2;
+
+  transform:
+    translate(-50%, -50%)
+    translateX(-120vw)
+    scale(.75);
+
+  will-change: transform, opacity;
+}
+
+/* THIRD IMAGE ZOOM */
+
+.splash-image.image-3 {
+  width: min(95vw, 450px);
+  height: min(60dvh, 450px);
+}
+
+.splash-image.animate {
+  animation: imageSplash 2.3s
+    cubic-bezier(.22,.8,.3,1) forwards;
+}
+
+@keyframes imageSplash {
+  0% {
+    opacity: 0;
+    transform:
+      translate(-50%, -50%)
+      translateX(-120vw)
+      rotate(-18deg)
+      scale(.65);
+  }
+
+  28% {
+    opacity: 1;
+    transform:
+      translate(-50%, -50%)
+      translateX(0)
+      rotate(5deg)
+      scale(1.1);
+  }
+
+  40% {
+    opacity: 1;
+    transform:
+      translate(-50%, -50%)
+      translateX(0)
+      rotate(-3deg)
+      scale(.98);
+  }
+
+  50%, 70% {
+    opacity: 1;
+    transform:
+      translate(-50%, -50%)
+      translateX(0)
+      rotate(0deg)
+      scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform:
+      translate(-50%, -50%)
+      translateX(120vw)
+      rotate(18deg)
+      scale(.75);
+  }
+}
+
+/* FINAL LOGO */
+
+.final-brand {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  width: 90%;
+  text-align: center;
+
+  opacity: 0;
+  visibility: hidden;
+  z-index: 3;
+
+  transform:
+    translate(-50%, -50%)
+    scale(.5);
+}
+
+.final-brand.show {
+  visibility: visible;
+  animation: brandReveal 1s
+    cubic-bezier(.2,1.4,.4,1) forwards;
+}
+
+.brand-logo {
+  width: 300px;
+  height: 300px;
+  object-fit: contain;
+}
+
+@keyframes brandReveal {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(.5);
+  }
+
+  65% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+  .splash-image {
+    width: 50vw;
+    height: 40dvh;
+  }
+
+  .splash-image.image-3 {
+    width: 95vw;
+    height: 60dvh;
+  }
+
+  .splash-glow {
+    width: 260px;
+    height: 260px;
+  }
+
+  .final-brand .brand-logo {
+    width: 200px;
+    height: 200px;
+    max-width: 85vw;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="splash-screen" id="splashScreen">
+
+  <div class="splash-glow"></div>
+
+  <img
+    id="splashImage"
+    class="splash-image"
+    alt="AVANIQ Product"
+  >
+
+  <div class="final-brand" id="finalBrand">
+    <img
+      src="oo.png"
+      class="brand-logo"
+      alt="AVANIQ Logo"
+    >
+  </div>
+
+</div>
+
+<script>
+const images = [
+  "img1.webp",
+  "img2.webp",
+  "img3.webp",
+  "img4.webp",
+  "img5.webp",
+  "img6.webp"
+];
+
+const splashImage =
+  document.getElementById("splashImage");
+
+const finalBrand =
+  document.getElementById("finalBrand");
+
+let currentIndex = 0;
+
+const animationDuration = 2300;
+
+function playNextImage() {
+
+  if (currentIndex >= images.length) {
+    showFinalBrand();
+    return;
+  }
+
+  splashImage.classList.remove("animate");
+
+  void splashImage.offsetWidth;
+
+  splashImage.classList.toggle(
+    "image-3",
+    images[currentIndex] === "img3.webp"
+  );
+
+  splashImage.src = images[currentIndex];
+
+  splashImage.classList.add("animate");
+
+  currentIndex++;
+
+  setTimeout(() => {
+    splashImage.classList.remove("animate");
+    playNextImage();
+  }, animationDuration);
+}
+
+function showFinalBrand() {
+  splashImage.style.display = "none";
+  finalBrand.classList.add("show");
+}
+
+window.addEventListener("load", playNextImage);
+</script>
+
+</body>
+</html>
